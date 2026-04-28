@@ -229,8 +229,8 @@ PRINT 'Creating 10 million mock attendance records...';
 PRINT 'This may take 5-15 minutes depending on system performance...';
 
 DECLARE @StartDate DATE = DATEADD(DAY, -9999, CAST(GETDATE() AS DATE)); -- 10,000 days back
-DECLARE @BatchSize INT = 1000; -- 1,000 days per batch
-DECLARE @TotalBatches INT = 10; -- 10 batches × (1,000 employees × 1,000 days) = 10M records
+DECLARE @BatchSize INT = 100; -- 100 days per batch
+DECLARE @TotalBatches INT = 100; -- 100 batches × (1,000 employees × 1,000 days) = 10M records
 DECLARE @CurrentBatch INT = 0;
 
 -- Create extended numbers table for efficient bulk generation
@@ -287,6 +287,8 @@ BEGIN
           AND a.Id IS NULL;
 
         COMMIT TRANSACTION;
+        CHECKPOINT;
+        WAITFOR DELAY '00:00:01';
 
         SET @CurrentBatch = @CurrentBatch + 1;
         DECLARE @RecordsInserted BIGINT = @CurrentBatch * @BatchSize * 1000;
