@@ -48,7 +48,7 @@ const leaveColumns = [
   { title: 'Số ngày', dataIndex: 'totalDays', key: 'totalDays' },
   { title: 'Cấp duyệt', dataIndex: 'currentApprovalLevel', key: 'currentApprovalLevel' },
   { title: 'Trạng thái', dataIndex: 'status', key: 'status' },
-  { title: '', key: 'actions', dataIndex: 'actions', width: 60, fixed: 'right' },
+  { title: '', key: 'actions', dataIndex: 'actions', width: 90, fixed: 'right' },
 ]
 
 // =========================
@@ -583,6 +583,18 @@ watch(() => selectedStatus.value, () => {
   flex: 1;
   min-height: 0;
   border: 1px solid #e8edf5;
+}
+
+.leave-page :deep(.leave-table .ant-table-tbody > tr > td) {
+  transition: background-color 0.2s ease;
+}
+
+.leave-page :deep(.leave-table .ant-table-tbody > tr:hover > td) {
+  background: #f8fbff;
+}
+
+.leave-page :deep(.leave-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-right) {
+  background: #f8fbff;
 }
 
 .leave-page :deep(.leave-table .ant-pagination) {
