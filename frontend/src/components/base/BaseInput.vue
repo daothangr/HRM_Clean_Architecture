@@ -1,0 +1,149 @@
+<script setup>
+import { useAttrs } from "vue";
+
+defineOptions({ inheritAttrs: false });
+const attrs = useAttrs();
+// ================
+// Props & Emits Region
+// ================
+const props = defineProps({
+  required: {
+    type: Boolean,
+    default: false,
+  },
+  modelValue: {
+    type: String,
+    default: "",
+  },
+  iconClass: {
+    type: String,
+    default: "",
+  },
+  placeholder: {
+    type: String,
+    default: "",
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(["update:modelValue"]);
+</script>
+
+<template>
+  <div class="ms-input">
+    <!-- Label -->
+    <div class="ms-input__label">
+      <span class="ms-input__label-left">
+        <slot></slot>
+        <span v-if="required" class="ms-input__required">*</span>
+      </span>
+      <span class="ms-input__label-right">
+        <slot name="label-right"></slot>
+      </span>
+    </div>
+
+    <!-- Input wrapper -->
+    <div
+      class="ms-input__form"
+    >
+      <input
+        class="ms-input__control"
+        :value="modelValue"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        v-bind="attrs"
+        @input="emit('update:modelValue', $event.target.value)"
+      />
+
+        <i v-if="iconClass" :class="iconClass" class="ms-input__icon-inside"></i>
+
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* Wrapper */
+.ms-input {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Label */
+.ms-input__label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+/* Required star */
+.ms-input__required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.ms-input__label-right {
+  font-size: 14px;
+  color: #b2b2b2;
+  white-space: nowrap;
+}
+
+/* Input */
+.ms-input__form {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Focus */
+.ms-input__form:hover,
+.ms-input__form:focus-within {
+  border-color: var(--color-branch-primary);
+  /* box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2); */
+}
+
+/* Error */
+.ms-input__form--invalid {
+  border-color: var(--color-status-error);
+  border-width: 2px;
+}
+
+
+.ms-input__control {
+  position: relative;
+  height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  border: none;
+}
+
+/* Placeholder */
+.ms-input__control::placeholder {
+  color: var(--color-text-placeholder);
+  font-weight: 200;
+}
+
+.ms-input__icon-inside {
+  margin-right: 10px;
+  cursor: pointer;
+  color: #9ca3af;
+  padding-left: 6px;
+}
+
+</style>

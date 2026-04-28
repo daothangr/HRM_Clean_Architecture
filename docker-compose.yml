@@ -1,0 +1,77 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DB_PASSWORD:-D2tts@rikkeisoft}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  sql-init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./sql:/sql
+    environment:
+      - GENERATE_MOCK_DATA=${GENERATE_MOCK_DATA:-false}
+    command: >
+      /bin/sh -c "
+      echo '⏳ Waiting for SQL Server...' &&
+      sleep 20 &&
+
+      echo '🚀 Running init.sql...' &&
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -i /sql/init.sql &&
+
+      echo '🚀 Running stored procedures scripts...' &&
+
+      for file in /sql/*Procedures.sql; do
+        if [ -f \"$$file\" ]; then
+          echo \"Running $$file\" &&
+          /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -d HRM_System -i \"$$file\";
+        fi
+      done &&
+
+      if [ \"$$GENERATE_MOCK_DATA\" = \"true\" ]; then
+        echo '📊 Generating 10 million mock attendance records and 1000 employees...' &&
+        echo '⏳ This may take 5-15 minutes...' &&
+        /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -d HRM_System -i /sql/MockData.sql &&
+        echo '✅ Mock data generation completed!';
+      else
+        echo '⏭️ Skipping mock data generation (set GENERATE_MOCK_DATA=true to enable)';
+      fi &&
+
+      echo '✅ Database initialization completed!'
+      "
+
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: HRM.API/Dockerfile
+    container_name: hrm-api
+    depends_on:
+      sql-init:
+        condition: service_completed_successfully
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=HRM_System;User Id=sa;Password=${DB_PASSWORD:-D2tts@rikkeisoft};TrustServerCertificate=True;Encrypt=False;
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hrm-frontend
+    depends_on:
+      - api
+    ports:
+      - "5173:80"
+
+volumes:
+  sql_data:

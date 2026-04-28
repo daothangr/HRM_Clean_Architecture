@@ -1,0 +1,23 @@
+:root {
+  /* branch */
+  --color-branch-primary: #4387ee;
+
+  /* Text */
+  --color-text-primary: #212121;
+  --color-text-secondary: #666666;
+  --color-text-placeholder: #9e9e9e;
+
+  /* Background */
+  --color-bg-default: #f2f2f2;
+  --color-bg-secondary: #e7e7e7;
+
+  /* Border Icon */
+  --color-border-icon: #707070;
+
+  /* Status */
+  --color-status-focus: #eaf7ee;
+  --color-status-error: #e54848;
+  --color-status-warning: #ffd900;
+  --color-status-success: #34b057;
+  --color-status-pending: #ff9900;
+}

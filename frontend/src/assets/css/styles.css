@@ -1,0 +1,10 @@
+body,
+html {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-size: 13px;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@import './toolbar.css';
