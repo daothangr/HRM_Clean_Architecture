@@ -1,0 +1,128 @@
+.form-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  overscroll-behavior: contain;
+  background: rgba(15, 23, 42, 0.45);
+  padding: var(--form-overlay-padding, 24px);
+  box-sizing: border-box;
+}
+
+.form-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(var(--form-modal-width, 960px), 100%);
+  max-height: var(--form-modal-max-height, 80vh);
+  min-height: 300px;
+  border-radius: var(--form-modal-radius, 16px);
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: var(--form-header-padding, 25px 28px);
+  flex-shrink: 0;
+}
+
+.form-title {
+  margin: 0;
+  font-size: var(--form-title-size, 25px);
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.close-button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.form-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-sections-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--form-sections-wrapper-padding, 12px 24px);
+}
+
+.form-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-section {
+  border-radius: 12px;
+  padding: 10px 16px;
+}
+
+.form-section-title {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.form-grid--two-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: var(--form-actions-padding, 20px 28px);
+  flex-shrink: 0;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 0 0 16px 16px;
+}
+
+@media (max-width: 1024px) {
+  .form-grid--two-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-overlay {
+    padding: 12px;
+  }
+
+  .form-header,
+  .form-body {
+    padding: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+}

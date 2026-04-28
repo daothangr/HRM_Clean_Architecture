@@ -164,17 +164,17 @@ watch(
 </script>
 
 <template>
-  <div class="leave-form-overlay">
-    <div class="leave-form-modal">
-      <div class="leave-form-header">
-        <div class="leave-form-title">{{ isEditMode ? 'Chỉnh sửa đơn nghỉ phép' : 'Tạo đơn nghỉ phép' }}</div>
+  <div class="form-overlay leave-form-overlay">
+    <div class="form-modal leave-form-modal">
+      <div class="form-header leave-form-header">
+        <div class="form-title">{{ isEditMode ? 'Chỉnh sửa đơn nghỉ phép' : 'Tạo đơn nghỉ phép' }}</div>
         <button class="close-button" type="button" aria-label="Đóng form" @click="handleClose">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <form class="leave-form-body" @submit.prevent="handleSubmit">
-        <div class="form-sections-wrapper">
+      <form class="form-body leave-form-body" @submit.prevent="handleSubmit">
+        <div class="form-sections-wrapper leave-form-sections-wrapper">
           <div class="form-sections">
             <section class="form-section">
               <h3 class="form-section-title">Thông tin đơn nghỉ phép</h3>
@@ -271,7 +271,7 @@ watch(
           </div>
         </div>
 
-        <div class="form-actions">
+        <div class="form-actions leave-form-actions">
           <BaseButton backgroundColor="#eef2f7" textColor="#334155" @click="handleClose">
             Hủy
           </BaseButton>
@@ -285,101 +285,11 @@ watch(
 </template>
 
 <style scoped>
-.leave-form-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  background: rgba(15, 23, 42, 0.45);
-  padding: 24px;
-  box-sizing: border-box;
-}
-
-.leave-form-modal {
-  display: flex;
-  flex-direction: column;
-  width: min(800px, calc(100vw - 48px));
-  max-height: calc(100vh - 48px);
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
-}
-
-.leave-form-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 25px 28px;
-  flex-shrink: 0;
-}
-
-.leave-form-title {
-  margin: 0;
-  font-size: 25px;
-  color: #0f172a;
-  font-weight: 700;
-}
 
 .close-button {
   width: 36px;
   height: 36px;
-  border: none;
-  border-radius: 10px;
-  background: #f8fafc;
-  color: #475569;
-  cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.close-button:hover {
-  background: #e2e8f0;
-  color: #1e293b;
-}
-
-.leave-form-body {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-sections-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px 24px;
-}
-
-.form-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.form-section {
-  border-radius: 12px;
-  padding: 10px 16px;
-}
-
-.form-section-title {
-  margin: 0 0 12px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-
-.form-grid--two-columns {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .full-day-toggle {
@@ -437,34 +347,13 @@ watch(
   box-shadow: 0 0 0 3px rgba(67, 135, 238, 0.1);
 }
 
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 20px 28px;
-  flex-shrink: 0;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-  border-radius: 0 0 16px 16px;
-}
-
 @media (max-width: 768px) {
   .leave-form-overlay {
-    padding: 12px;
+    --form-overlay-padding: 12px;
   }
 
-  .leave-form-header,
-  .leave-form-body {
-    padding: 16px;
-  }
-
-  .form-grid--two-columns {
-    grid-template-columns: 1fr;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
+  .leave-form-actions {
+    --form-actions-padding: 16px 16px;
   }
 }
 </style>

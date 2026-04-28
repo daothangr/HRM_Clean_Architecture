@@ -87,16 +87,16 @@ watch(
 </script>
 
 <template>
-	<div class="department-form-overlay">
-		<div class="department-form-modal">
-			<div class="department-form-header">
-				<div class="department-form-title">{{ isEditMode ? 'Sửa phòng ban' : 'Thêm phòng ban' }}</div>
+	<div class="form-overlay">
+		<div class="form-modal">
+			<div class="form-header">
+				<div class="form-title">{{ isEditMode ? 'Sửa phòng ban' : 'Thêm phòng ban' }}</div>
 				<button class="close-button" type="button" aria-label="Đóng form" @click="handleClose">
 					<i class="fa-solid fa-xmark"></i>
 				</button>
 			</div>
 
-			<form class="department-form-body" @submit.prevent="handleSubmit">
+			<form class="form-body" @submit.prevent="handleSubmit">
 				<div class="form-sections-wrapper">
 					<div class="form-sections">
 						<section class="form-section">
@@ -144,122 +144,4 @@ watch(
 </template>
 
 <style scoped>
-.department-form-overlay {
-	position: fixed;
-	inset: 0;
-	z-index: 1000;
-	display: grid;
-	place-items: center;
-	background: rgba(15, 23, 42, 0.45);
-	padding: 24px;
-}
-
-.department-form-modal {
-	display: flex;
-	flex-direction: column;
-	width: min(960px, 100%);
-	max-height: 80vh;
-	border-radius: 16px;
-	background: #ffffff;
-	box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
-}
-
-.department-form-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 25px 28px;
-	flex-shrink: 0;
-}
-
-.department-form-title {
-	margin: 0;
-	font-size: 25px;
-	color: #0f172a;
-	font-weight: 700;
-}
-
-.close-button {
-	width: 36px;
-	height: 36px;
-	border: none;
-	border-radius: 10px;
-	background: #f8fafc;
-	color: #475569;
-	cursor: pointer;
-}
-
-.department-form-body {
-	flex: 1;
-	overflow-y: auto;
-	display: flex;
-	flex-direction: column;
-}
-
-.form-sections-wrapper {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px 24px 26px;
-}
-
-.form-sections {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.form-section {
-	border-radius: 12px;
-	padding: 10px 16px;
-}
-
-.form-section-title {
-	margin: 0 0 12px;
-	font-size: 18px;
-	font-weight: 600;
-	color: #1e293b;
-}
-
-.form-grid {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 14px;
-}
-
-.form-grid--two-columns {
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-@media (max-width: 1024px) {
-	.form-grid--two-columns {
-		grid-template-columns: 1fr;
-	}
-}
-
-.form-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 12px;
-	padding: 20px 28px;
-	flex-shrink: 0;
-	border-top: 1px solid #e2e8f0;
-	background: #f8fafc;
-	border-radius: 0 0 16px 16px;
-}
-
-@media (max-width: 768px) {
-	.department-form-overlay {
-		padding: 12px;
-	}
-
-	.department-form-header,
-	.department-form-body {
-		padding: 16px;
-	}
-
-	.form-actions {
-		flex-direction: column-reverse;
-	}
-}
 </style>

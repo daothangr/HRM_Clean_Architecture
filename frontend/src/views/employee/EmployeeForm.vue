@@ -114,17 +114,17 @@ watch(
 </script>
 
 <template>
-  <div class="employee-form-overlay">
-    <div class="employee-form-modal">
-      <div class="employee-form-header">
-        <div class="employee-form-title">{{ isEditMode ? 'Sửa nhân viên' : 'Thêm nhân viên' }}</div>
+  <div class="form-overlay employee-form-overlay">
+    <div class="form-modal employee-form-modal">
+      <div class="form-header employee-form-header">
+        <div class="form-title">{{ isEditMode ? 'Sửa nhân viên' : 'Thêm nhân viên' }}</div>
         <button class="close-button" type="button" aria-label="Đóng form" @click="handleClose">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <form class="employee-form-body" @submit.prevent="handleSubmit">
-        <div class="form-sections-wrapper">
+      <form class="form-body employee-form-body" @submit.prevent="handleSubmit">
+        <div class="form-sections-wrapper employee-form-sections-wrapper">
           <div class="form-sections">
           <section class="form-section">
             <h3 class="form-section-title">Thông tin xác thực</h3>
@@ -238,7 +238,7 @@ watch(
         </div>
         </div>
 
-        <div class="form-actions">
+        <div class="form-actions employee-form-actions">
           <BaseButton backgroundColor="#eef2f7" textColor="#334155" @click="handleClose">
             Hủy
           </BaseButton>
@@ -253,121 +253,30 @@ watch(
 
 <style scoped>
 .employee-form-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: grid;
-  place-items: center;
-  background: rgba(15, 23, 42, 0.45);
-  padding: 24px;
+  --form-overlay-padding: 24px;
 }
 
 .employee-form-modal {
-  display: flex;
-  flex-direction: column;
-  width: min(960px, 100%);
-  max-height: 80vh;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+  --form-modal-width: 960px;
 }
 
 .employee-form-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 25px 28px;
-  flex-shrink: 0;
-}
-
-.employee-form-title {
-  margin: 0;
-  font-size: 25px;
-  color: #0f172a;
-  font-weight: 700;
+  --form-header-padding: 25px 28px;
 }
 
 .close-button {
   width: 36px;
   height: 36px;
   border: none;
-  border-radius: 10px;
-  background: #f8fafc;
-  color: #475569;
-  cursor: pointer;
 }
 
-.employee-form-body {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-sections-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px 24px;
-}
-
-.form-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.form-section {
-  border-radius: 12px;
-  padding: 10px 16px;
-}
-
-.form-section-title {
-  margin: 0 0 12px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-
-.form-grid--two-columns {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-@media (max-width: 1024px) {
-  .form-grid--two-columns {
-    grid-template-columns: 1fr;
-  }
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 20px 28px;
-  flex-shrink: 0;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-  border-radius: 0 0 16px 16px;
+.employee-form-sections-wrapper {
+  --form-sections-wrapper-padding: 12px 24px;
 }
 
 @media (max-width: 768px) {
   .employee-form-overlay {
-    padding: 12px;
-  }
-
-  .employee-form-header,
-  .employee-form-body {
-    padding: 16px;
-  }
-
-  .form-actions {
-    flex-direction: column-reverse;
+    --form-overlay-padding: 12px;
   }
 }
 </style>

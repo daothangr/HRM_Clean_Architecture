@@ -14,6 +14,7 @@ import { LEAVE_REQUEST_STATUS, LEAVE_TYPE } from '../../constants/enum'
 import { useToast } from '@/composables/useToast'
 import { useAuthStore } from '@/stores/auth'
 import dayjs from 'dayjs'
+import { scrollToTop } from '@/utils/scroll'
 
 // =========================
 // Stores, state and constants
@@ -54,6 +55,7 @@ const leaveColumns = [
 // UI actions
 // =========================
 const handleOpenFormAddLeave = () => {
+  scrollToTop()
   selectedLeave.value = null
   isShowLeaveForm.value = true
 }
@@ -79,11 +81,6 @@ const tablePagination = computed(() => ({
   position: ['bottomRight'],
   pageSizeOptions: ['10', '20', '50'],
   showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`
-}))
-
-const tableScroll = computed(() => ({
-  x: 1400,
-  y: 420,
 }))
 
 // =========================
@@ -341,7 +338,7 @@ watch(() => selectedStatus.value, () => {
         :data="leaveData"
         :loading="isTableLoading"
         :pagination="tablePagination"
-        :scroll="tableScroll"
+        :scroll="{ y: 'calc(100vh - 390px)'}"
         row-key="id"
         @change="handleTableChange"
       >
@@ -413,24 +410,6 @@ watch(() => selectedStatus.value, () => {
 <style scoped>
 .leave-page {
   display: grid;
-  gap: 16px;
-}
-
-.main-content__title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.title-name {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--color-text-primary);
-}
-
-.main-content__wrap {
-  display: flex;
-  flex-direction: column;
   gap: 16px;
 }
 
@@ -574,46 +553,11 @@ watch(() => selectedStatus.value, () => {
   background: #f1f7ff;
 }
 
-.row-action-buttons {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.leave-page :deep(.leave-table .row-action-button) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  color: #4387ee;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(2px);
-  transition: all 0.18s ease;
-  font-size: 14px;
-}
-
 .leave-page :deep(.leave-table .row-action-button--approve) {
   color: #16a34a;
 }
 
-.leave-page :deep(.leave-table .row-action-button--approve:hover) {
-  background: #dcfce7;
-  border-color: #86efac;
-  color: #16a34a;
-}
-
 .leave-page :deep(.leave-table .row-action-button--reject) {
-  color: #dc2626;
-}
-
-.leave-page :deep(.leave-table .row-action-button--reject:hover) {
-  background: #fee2e2;
-  border-color: #fca5a5;
   color: #dc2626;
 }
 
@@ -649,17 +593,6 @@ watch(() => selectedStatus.value, () => {
   padding: 12px 16px;
   background: #ffffff;
   border-top: 1px solid #e8edf5;
-}
-
-.leave-page :deep(.leave-table .row-action-button:hover) {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #4387ee;
-}
-
-.leave-page :deep(.leave-table .ant-table-tbody > tr:hover .row-action-button) {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .leave-page :deep(.leave-table .ant-table-cell:last-child) {
@@ -751,14 +684,5 @@ watch(() => selectedStatus.value, () => {
     font-size: 13px;
   }
 
-  .row-action-buttons {
-    gap: 4px;
-  }
-
-  .leave-page :deep(.leave-table .row-action-button) {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
-  }
 }
 </style>

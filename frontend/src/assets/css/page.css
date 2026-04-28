@@ -1,0 +1,60 @@
+.main-content__title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.title-name {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.main-content__wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row-action-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.row-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #4387ee;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(2px);
+  transition: all 0.18s ease;
+  font-size: 14px;
+}
+
+.row-action-button:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #4387ee;
+}
+
+.ant-table-tbody > tr:hover .row-action-button {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .main-content__title {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

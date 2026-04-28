@@ -13,6 +13,7 @@ import { GENDER_OPTIONS, STATUS_EMPLOYEE_OPTIONS } from "../../constants/option"
 import { EMPLOYEE_STATUS } from "../../constants/enum"
 import { useToast } from '@/composables/useToast'
 import { useAuthStore } from "@/stores/auth"
+import { scrollToTop } from '@/utils/scroll'
 
 // =========================
 // Stores, state and constants
@@ -55,6 +56,7 @@ const EMPLOYEE_STATUS_CLASS_MAP = Object.freeze({
 // UI actions
 // =========================
 const handleOpenFormAddEmployee = () => { 
+  scrollToTop()
   selectedEmployee.value = null
   isShowEmployeeForm.value = true
 }
@@ -81,11 +83,6 @@ const tablePagination = computed(() => ({
   position: ['bottomRight'],
   pageSizeOptions: ['10', '20', '50'],
   showTotal: (total, range) => `${range[0]}-${range[1]} / ${total}`
-}))
-
-const tableScroll = computed(() => ({
-  x: 1200,
-  y: 420,
 }))
 
 
@@ -150,6 +147,7 @@ const handleEditEmployee = async (employee) => {
   try {
     const response = await getEmployeeById(employee.id)
     selectedEmployee.value = response.data
+    scrollToTop()
     isShowEmployeeForm.value = true
     console.log('Selected employee for edit:', selectedEmployee.value)
   } catch (error) {
@@ -224,12 +222,14 @@ onMounted(() => {
   <section class="employee-page">
     <!-- Title -->
     <div class="main-content__title">
-      <div class="title-name">Nhân viên</div>
-      <div class="title-button">
-        <base-button iconClass="fas fa-plus" @click="handleOpenFormAddEmployee">
-          Thêm nhân viên
-        </base-button>
+      <div>
+        <h1 class="title-name">Nhân viên</h1>
+        <p class="employee-page__subtitle">Danh sách nhân viên toàn công ty</p>
       </div>
+
+      <BaseButton iconClass="fas fa-plus" @click="handleOpenFormAddEmployee">
+        Thêm nhân viên
+      </BaseButton>
     </div>
 
     <div class="main-content__wrap">
@@ -262,8 +262,8 @@ onMounted(() => {
         :data="employeeData"
         :loading="isTableLoading"
         :pagination="tablePagination"
-        :scroll="tableScroll"
         row-key="id"
+        :scroll = "{ y: 'calc(100vh - 390px)'}"
         @change="handleTableChange"
       >
         <template #bodyCell="{ column, text, record }">
@@ -324,50 +324,16 @@ onMounted(() => {
   gap: 16px;
 }
 
-.main-content__title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.title-name {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--color-text-primary);
-}
-
-.main-content__wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.employee-page__subtitle {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 14px;
 }
 
 .toolbar-icon:hover {
   border-color: #4387ee;
   color: #4387ee;
   background: #f1f7ff;
-}
-
-.row-action-buttons {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.employee-page :deep(.employee-table .row-action-button) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  color: #4387ee;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(2px);
-  transition: all 0.18s ease;
 }
 
 .employee-page :deep(.employee-table .row-action-button--delete) {
@@ -414,17 +380,6 @@ onMounted(() => {
   border-top: 1px solid #e8edf5;
 }
 
-.employee-page :deep(.employee-table .row-action-button:hover) {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #4387ee;
-}
-
-.employee-page :deep(.employee-table .ant-table-tbody > tr:hover .row-action-button) {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .employee-page :deep(.employee-table .ant-table-cell:last-child) {
   text-align: center;
 }
@@ -461,9 +416,6 @@ onMounted(() => {
   background: #e2e8f0;
 }
 
-@media (max-width: 768px) {
-  .employee-page :deep(.employee-table .ant-table-wrapper) {
-    height: 500px;
-  }
+@media (max-width: 992px) {
 }
 </style>

@@ -8,3 +8,5 @@ html {
 }
 
 @import './toolbar.css';
+@import './commons.css';
+@import './form.css';

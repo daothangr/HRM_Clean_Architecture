@@ -170,6 +170,7 @@ onMounted(async () => {
         :loading="isTableLoading"
         :pagination="tablePagination"
         row-key="id"
+        :scroll = "{ y: 'calc(100vh - 375px)'}"
         @change="handleTableChange"
       >
         <template #bodyCell="{ column, text }">
@@ -197,24 +198,6 @@ onMounted(async () => {
 <style scoped>
 .attendance-history-page {
   display: grid;
-  gap: 16px;
-}
-
-.main-content__title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.title-name {
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--color-text-primary);
-}
-
-.main-content__wrap {
-  display: flex;
-  flex-direction: column;
   gap: 16px;
 }
 

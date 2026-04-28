@@ -11,6 +11,7 @@ import { useToast } from '@/composables/useToast'
 import { STATUS_DEPARTMENT_OPTIONS } from '../../constants/option'
 import DepartmentForm from './DepartmentForm.vue'
 import { getDepartmentById } from '../../api/department'
+import { scrollToTop } from '@/utils/scroll'
 
 // =========================
 // Stores, state and constants
@@ -37,6 +38,7 @@ const departmentColumns = [
 // UI actions
 // =========================
 const handleAddDepartment = () => {
+  scrollToTop()
   selectedDepartment.value = null
   isShowDepartmentForm.value = true
 }
@@ -47,6 +49,7 @@ const handleCloseDepartmentForm = () => {
 }
 
 const handleEditDepartment = async (department) => {
+
   if (!department?.id) {
     return
   }
@@ -54,6 +57,7 @@ const handleEditDepartment = async (department) => {
   try {
     const response = await getDepartmentById(department.id)
     selectedDepartment.value = response.data
+    scrollToTop()
     isShowDepartmentForm.value = true
   } catch (error) {
     console.error('Failed to fetch department details:', error)
@@ -157,9 +161,9 @@ onMounted(() => {
 <template>
   <section class="department-page">
     <!-- Title -->
-    <div class="department-page__header">
+    <div class="main-content__title">
       <div>
-        <h1 class="department-page__title">Phòng ban</h1>
+        <h1 class="title-name">Phòng ban</h1>
         <p class="department-page__subtitle">Danh sách phòng ban toàn công ty</p>
       </div>
 
@@ -168,7 +172,7 @@ onMounted(() => {
       </BaseButton>
     </div>
 
-    <div class="department-page__wrap">
+    <div class="main-content__wrap">
       <div class="toolbar">
         <div class="toolbar-search">
           <BaseInput
@@ -254,30 +258,10 @@ onMounted(() => {
   gap: 16px;
 }
 
-.department-page__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.department-page__title {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--color-text-primary);
-}
-
 .department-page__subtitle {
   margin: 4px 0 0;
   color: #64748b;
   font-size: 14px;
-}
-
-.department-page__wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .toolbar-icon:hover {
@@ -296,47 +280,14 @@ onMounted(() => {
   border: 1px solid #e8edf5;
 }
 
-.row-action-buttons {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.department-page :deep(.department-table .row-action-button) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  background: transparent;
-  color: #4387ee;
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(2px);
-  transition: all 0.18s ease;
-}
-
 .department-page :deep(.department-table .row-action-button--delete) {
   color: #ef4444;
-}
-
-.department-page :deep(.department-table .row-action-button:hover) {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #4387ee;
 }
 
 .department-page :deep(.department-table .row-action-button.row-action-button--delete:hover) {
   background: #fee2e2;
   border-color: #fca5a5;
   color: #ef4444;
-}
-
-.department-page :deep(.department-table .ant-table-tbody > tr:hover .row-action-button) {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .department-page :deep(.department-table .ant-table-cell:last-child) {
@@ -365,12 +316,5 @@ onMounted(() => {
 }
 
 @media (max-width: 992px) {
-}
-
-@media (max-width: 768px) {
-  .department-page__header {
-    flex-direction: column;
-    align-items: stretch;
-  }
 }
 </style>
