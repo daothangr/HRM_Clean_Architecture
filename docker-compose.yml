@@ -20,25 +20,35 @@ services:
       - GENERATE_MOCK_DATA=${GENERATE_MOCK_DATA:-false}
     command: >
       /bin/sh -c "
-      echo '⏳ Waiting for SQL Server...' &&
-      sleep 20 &&
+      set -e;
+
+      echo '⏳ Waiting for SQL Server to be ready...' &&
+      MAX_RETRIES=30 &&
+      RETRY_COUNT=0 &&
+      until /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -Q 'SELECT 1' >/dev/null 2>&1; do
+        RETRY_COUNT=$$((RETRY_COUNT + 1));
+        if [ \"$$RETRY_COUNT\" -ge \"$$MAX_RETRIES\" ]; then
+          echo '❌ SQL Server did not become ready in time.';
+          exit 1;
+        fi
+        echo \"⏳ SQL Server not ready yet, retry $$RETRY_COUNT/$$MAX_RETRIES...\" &&
+        sleep 5;
+      done &&
 
       echo '🚀 Running init.sql...' &&
-      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -i /sql/init.sql &&
+      /opt/mssql-tools/bin/sqlcmd -b -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -i /sql/init.sql &&
 
       echo '🚀 Running stored procedures scripts...' &&
-
       for file in /sql/*Procedures.sql; do
         if [ -f \"$$file\" ]; then
           echo \"Running $$file\" &&
-          /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -d HRM_System -i \"$$file\";
+          /opt/mssql-tools/bin/sqlcmd -b -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -d HRM_System -i \"$$file\";
         fi
       done &&
 
       if [ \"$$GENERATE_MOCK_DATA\" = \"true\" ]; then
-        echo '📊 Generating 10 million mock attendance records and 1000 employees...' &&
-        echo '⏳ This may take 5-15 minutes...' &&
-        /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -d HRM_System -i /sql/MockData.sql &&
+        echo '📊 Generating mock data...' &&
+        /opt/mssql-tools/bin/sqlcmd -b -S sqlserver -U sa -P '${DB_PASSWORD:-D2tts@rikkeisoft}' -d HRM_System -i /sql/MockData.sql &&
         echo '✅ Mock data generation completed!';
       else
         echo '⏭️ Skipping mock data generation (set GENERATE_MOCK_DATA=true to enable)';
@@ -46,7 +56,6 @@ services:
 
       echo '✅ Database initialization completed!'
       "
-
 
   api:
     build:
