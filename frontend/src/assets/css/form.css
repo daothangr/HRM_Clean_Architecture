@@ -126,3 +126,35 @@
     flex-direction: column-reverse;
   }
 }
+
+/* Shared input/dropdown status styles */
+
+
+.ms-input__icon-status {
+  margin-right: 10px;
+  padding-left: 6px;
+  flex-shrink: 0;
+  cursor: default;
+}
+
+.ms-input__icon-status--success {
+  color: #10b981 !important;
+}
+
+.ms-input__icon-status--error {
+  color: #ef4444 !important;
+}
+
+.ms-input__message {
+  font-size: 13px;
+  font-weight: 400;
+  padding-left: 6px;
+}
+
+.ms-input__message--success {
+  color: #10b981;
+}
+
+.ms-input__message--error {
+  color: #ef4444;
+}

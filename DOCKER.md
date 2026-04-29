@@ -10,7 +10,7 @@ docker-compose up
 This will:
 - Start SQL Server
 - Initialize the database with tables and stored procedures
-- Start the API server (http://localhost:8080)
+- Start the API server (http://localhost:8080/swagger)
 - Start the Frontend (http://localhost:5173)
 
 **Execution time:** ~30 seconds
@@ -30,6 +30,7 @@ docker-compose up
 This will additionally:
 - Generate **1,000 employees**
 - Generate **10 million attendance records** (spanning 3 years)
+- Generate **Roles, Department**
 
 **Execution time:** 5-15 minutes (mock data generation only, rest is ~30 seconds)
 
@@ -63,16 +64,6 @@ docker-compose up -d
 docker-compose logs -f sql-init      # Watch database init
 docker-compose logs -f hrm-api       # Watch API logs
 docker-compose logs -f hrm-frontend  # Watch frontend logs
-```
-
-### Connect to SQL Server
-```bash
-# Using sqlcmd
-sqlcmd -S localhost -U sa -P "D2tts@rikkeisoft"
-
-# Query attendances count
-SELECT COUNT(*) FROM Attendances;
-SELECT COUNT(*) FROM Employees;
 ```
 
 ### Stop and clean up

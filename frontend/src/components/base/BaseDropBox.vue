@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, useAttrs, watch } from 'vue';
 import { getDropdownOptions } from '@/api/dropdown';
+import { STATUS_NOTIFY } from '@/constants/enum';
 
 defineOptions({ inheritAttrs: false });
 const attrs = useAttrs();
@@ -34,6 +35,15 @@ const props = defineProps({
   options: {
     type: Array,
     default: () => [],
+  },
+  status: {
+    type: String,
+    default: STATUS_NOTIFY.DEFAULT,
+    validator: (value) => Object.values(STATUS_NOTIFY).includes(value),
+  },
+  message: {
+    type: String,
+    default: '',
   },
 });
 
@@ -149,7 +159,13 @@ onMounted(() => {
     </div>
 
     <!-- Content -->
-    <div class="base-dropbox__content">
+    <div
+      class="base-dropbox__content"
+      :class="{
+        'ms-input__form--success': status === STATUS_NOTIFY.SUCCESS,
+        'ms-input__form--error': status === STATUS_NOTIFY.ERROR,
+      }"
+    >
       <a-select
         v-model:value="value"
         class="base-dropbox__control"
@@ -161,6 +177,27 @@ onMounted(() => {
         @change="handleChange"
       ></a-select>
 
+      <i
+        v-if="status === STATUS_NOTIFY.SUCCESS"
+        class="ms-input__icon-status ms-input__icon-status--success fa fa-check-circle"
+      ></i>
+      <i
+        v-if="status === STATUS_NOTIFY.ERROR"
+        class="ms-input__icon-status ms-input__icon-status--error fa fa-exclamation-circle"
+      ></i>
+
+    </div>
+
+    <!-- Message -->
+    <div
+      v-if="message"
+      class="ms-input__message"
+      :class="{
+        'ms-input__message--success': status === STATUS_NOTIFY.SUCCESS,
+        'ms-input__message--error': status === STATUS_NOTIFY.ERROR,
+      }"
+    >
+      {{ message }}
     </div>
   </div>
 </template>
@@ -196,13 +233,26 @@ onMounted(() => {
   white-space: nowrap;
 }
 
+.ms-input__form--success{
+  border-color: #10b981 !important;
+  border-width: 1.5px !important;
+}
+
+.ms-input__form--error {
+  border-color: #ef4444 !important;
+  border-width: 1.5px !important;
+}
+
 /* Content */
 .base-dropbox__content {
+  display: flex;
+  align-items: center;
   height: 36px;
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
+  overflow: hidden;
 }
 
 .base-dropbox__content:hover,
@@ -214,6 +264,8 @@ onMounted(() => {
 .base-dropbox__control {
   height: 100%;
   width: 100%;
+  flex: 1;
+  min-width: 0;
 }
 
 :deep(.base-dropbox__control .ant-select-selector) {

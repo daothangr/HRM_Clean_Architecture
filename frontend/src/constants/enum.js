@@ -36,3 +36,10 @@ export const LEAVE_TYPE = {
     Unpaid: 3, 
     Other: 4,
 };
+
+export const STATUS_NOTIFY = {
+    DEFAULT: 1,
+    SUCCESS: 2,
+    ERROR: 3,
+    WARNING: 4,
+};

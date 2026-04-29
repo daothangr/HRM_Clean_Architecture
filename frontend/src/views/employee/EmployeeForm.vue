@@ -4,6 +4,7 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseDatePicker from '@/components/base/BaseDatePicker.vue'
 import BaseDropBox from '@/components/base/BaseDropBox.vue'
 import { GENDER_OPTIONS, STATUS_EMPLOYEE_OPTIONS, ROLE_OPTIONS } from '../../constants/option'
+import { STATUS_NOTIFY } from '../../constants/enum'
 import { computed, reactive, watch } from 'vue'
 
 
@@ -165,7 +166,8 @@ watch(
                 v-model="formData.gender"
                 placeholder="Chọn giới tính"
                 :options="GENDER_OPTIONS"
-                required
+                :status="STATUS_NOTIFY.SUCCESS"
+                message="Thông tin hợp lệ"
               >
                 Giới tính
               </BaseDropBox>
