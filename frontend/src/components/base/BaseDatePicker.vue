@@ -1,6 +1,7 @@
 <script setup>
 import { computed, useAttrs } from "vue";
 import dayjs from "dayjs";
+import { STATUS_NOTIFY } from "@/constants/enum";
 
 defineOptions({ inheritAttrs: false });
 const attrs = useAttrs();
@@ -18,6 +19,15 @@ const props = defineProps({
   modelValue: {
     type: Date,
     default: null,
+  },
+  status: {
+    type: String,
+    default: STATUS_NOTIFY.DEFAULT,
+    validator: (value) => Object.values(STATUS_NOTIFY).includes(value),
+  },
+  message: {
+    type: String,
+    default: '',
   },
 });
 
@@ -63,15 +73,44 @@ const value = computed({
         <slot name="label-right"></slot>
       </span>
     </div>
-    <a-date-picker
-      :disabled="disable"
+    <!-- Content -->
+    <div
       class="base-datepicker__content"
-      format="DD/MM/YYYY"
-      :placeholder="placeholder"
-      v-model:value="value"
-      v-bind="attrs"
-    />
+      :class="{
+        'base-datepicker__content--success': status === STATUS_NOTIFY.SUCCESS,
+        'base-datepicker__content--error': status === STATUS_NOTIFY.ERROR,
+      }"
+    >
+      <a-date-picker
+        :disabled="disable"
+        class="base-datepicker__control"
+        format="DD/MM/YYYY"
+        :placeholder="placeholder"
+        v-model:value="value"
+        v-bind="attrs"
+      />
+        <i
+          v-if="status === STATUS_NOTIFY.SUCCESS"
+          class="ms-input__icon-status ms-input__icon-status--success fa fa-check-circle"
+        ></i>
+        <i
+          v-if="status === STATUS_NOTIFY.ERROR"
+          class="ms-input__icon-status ms-input__icon-status--error fa fa-exclamation-circle"
+        ></i>
     </div>
+    <!-- Message -->
+    <div
+      v-if="message"
+      class="ms-input__message"
+      :class="{
+        'ms-input__message--success': status === STATUS_NOTIFY.SUCCESS,
+        'ms-input__message--error': status === STATUS_NOTIFY.ERROR,
+      }"
+    >
+      {{ message }}
+    </div>
+  </div>
+    
 </template>
 <style scoped>
 .base-datepicker {
@@ -105,27 +144,52 @@ const value = computed({
 
 /* Content */
 .base-datepicker__content {
+  display: flex;
+  align-items: center;
   height: 36px;
   width: 100%;
   box-sizing: border-box;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
+  overflow: hidden;
 }
 
 .base-datepicker__content:hover,
 .base-datepicker__content:focus-within {
   border-color: var(--color-branch-primary) !important;
   box-shadow: none !important;
-  /* box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2); */
 }
 
-:deep(.base-datepicker__content .ant-picker-input > input::placeholder) {
+.base-datepicker__content--success {
+  border-color: #10b981 !important;
+  border-width: 1.5px !important;
+}
+
+.base-datepicker__content--error {
+  border-color: #ef4444 !important;
+  border-width: 1.5px !important;
+}
+
+.base-datepicker__control {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+}
+
+:deep(.base-datepicker__content .ant-picker) {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: var(--color-text-placeholder) !important;
+}
+
+:deep(.base-datepicker__control .ant-picker-input input::placeholder) {
   color: var(--color-text-placeholder) !important;
   font-weight: 300;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
   opacity: 1;
 }
-
 
 </style>

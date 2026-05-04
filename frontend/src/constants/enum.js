@@ -38,8 +38,8 @@ export const LEAVE_TYPE = {
 };
 
 export const STATUS_NOTIFY = {
-    DEFAULT: 1,
-    SUCCESS: 2,
-    ERROR: 3,
-    WARNING: 4,
+    DEFAULT: 'default',
+    SUCCESS: 'success',
+    ERROR: 'error',
+    WARNING: 'warning',
 };

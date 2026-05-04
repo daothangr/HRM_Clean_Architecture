@@ -6,6 +6,8 @@ import BaseDropBox from '@/components/base/BaseDropBox.vue'
 import { GENDER_OPTIONS, STATUS_EMPLOYEE_OPTIONS, ROLE_OPTIONS } from '../../constants/option'
 import { STATUS_NOTIFY } from '../../constants/enum'
 import { computed, reactive, watch } from 'vue'
+import { useFormState } from '@/composables/useFormStatus'
+import { isEmptyValue } from '@/utils/validation'
 
 
 const props = defineProps({
@@ -45,6 +47,8 @@ const getDefaultFormData = () => ({
 
 const formData = reactive(getDefaultFormData())
 
+const { formState, setFieldState, clearFieldState, clearAllStates } = useFormState()
+
 
 /**
  * Đóng form và phát sự kiện close tới parent component.
@@ -53,6 +57,38 @@ const formData = reactive(getDefaultFormData())
 const handleClose = () => {
   emit('close')
 }
+
+/**
+ * Hàm validate form trước khi submit. Kiểm tra các trường bắt buộc và cập nhật trạng thái của từng trường.
+ * @returns {boolean} true when valid, false otherwise
+ */
+const validateForm = () => {
+  // reset previous field states
+  clearAllStates()
+
+  const requiredFields = ['fullName', 'email', 'departmentId', 'roleName', 'hireDate']
+  if (!isEditMode.value) {
+    requiredFields.unshift('employeeCode', 'password')
+  } else {
+    requiredFields.push('status')
+  }
+
+  const errors = []
+
+  requiredFields.forEach((field) => {
+    const value = formData[field]
+
+    if (isEmptyValue(value)) {
+      setFieldState(field, STATUS_NOTIFY.ERROR, 'Trường này là bắt buộc')
+      errors.push(field)
+    } else {
+      setFieldState(field, STATUS_NOTIFY.SUCCESS, '')
+    }
+  })
+
+  return errors.length === 0
+}
+
 
 /**
  * Xử lý submit form và phát sự kiện submit tới parent component cùng dữ liệu form.
@@ -66,11 +102,16 @@ const handleSubmit = () => {
     return String(value ?? '').trim()
   }
 
+  if (!validateForm()) {
+    return
+  }
+
   const payload = {
     ...formData,
     roleName: normalizeRoleName(formData.roleName),
   }
 
+  // emit submit when all required fields are valid
   emit('submit', payload)
   console.log('Form submitted with data:', payload)
 }
@@ -130,7 +171,8 @@ watch(
           <section class="form-section">
             <h3 class="form-section-title">Thông tin xác thực</h3>
             <div class="form-grid">
-              <BaseInput v-if="!isEditMode" v-model="formData.employeeCode" placeholder="Nhập mã nhân viên" required>
+              <BaseInput v-if="!isEditMode" v-model="formData.employeeCode" placeholder="Nhập mã nhân viên" required
+                :status="formState.employeeCode?.status" :message="(formState.employeeCode?.message || '')">
                 Mã nhân viên
               </BaseInput>
 
@@ -140,6 +182,7 @@ watch(
                 placeholder="Nhập mật khẩu"
                 type="password"
                 required
+                :status="formState.password?.status" :message="(formState.password?.message || '')"
               >
                 Mật khẩu
               </BaseInput>
@@ -149,6 +192,7 @@ watch(
                 v-model="formData.newPassword"
                 placeholder="Nhập mật khẩu mới"
                 type="password"
+                :status="formState.newPassword?.status" :message="(formState.newPassword?.message || '')"
               >
                 Mật khẩu mới
               </BaseInput>
@@ -158,7 +202,8 @@ watch(
           <section class="form-section">
             <h3 class="form-section-title">Thông tin cá nhân</h3>
             <div class="form-grid form-grid--two-columns">
-              <BaseInput v-model="formData.fullName" placeholder="Nhập họ và tên" required>
+              <BaseInput v-model="formData.fullName" placeholder="Nhập họ và tên" required
+                :status="formState.fullName?.status" :message="(formState.fullName?.message || '')">
                 Họ và tên
               </BaseInput>
 
@@ -166,8 +211,6 @@ watch(
                 v-model="formData.gender"
                 placeholder="Chọn giới tính"
                 :options="GENDER_OPTIONS"
-                :status="STATUS_NOTIFY.SUCCESS"
-                message="Thông tin hợp lệ"
               >
                 Giới tính
               </BaseDropBox>
@@ -187,7 +230,8 @@ watch(
                 Số điện thoại
               </BaseInput>
 
-              <BaseInput v-model="formData.email" placeholder="Nhập email" required>
+              <BaseInput v-model="formData.email" placeholder="Nhập email" required
+                :status="formState.email?.status" :message="(formState.email?.message || '')">
                 Email
               </BaseInput>
             </div>
@@ -196,7 +240,8 @@ watch(
           <section class="form-section">
             <h3 class="form-section-title">Công việc</h3>
             <div class="form-grid form-grid--two-columns">
-              <BaseDropBox v-model="formData.departmentId" placeholder="Chọn phòng ban" route="/departments" required>
+              <BaseDropBox v-model="formData.departmentId" placeholder="Chọn phòng ban" route="/departments" required
+                :status="formState.departmentId?.status" :message="(formState.departmentId?.message || '')">
                 Phòng ban
               </BaseDropBox>
 
@@ -208,7 +253,8 @@ watch(
                 Quản lý
               </BaseDropBox>
 
-              <BaseDropBox v-model="formData.roleName" placeholder="Chọn Role" :options="ROLE_OPTIONS" required>
+              <BaseDropBox v-model="formData.roleName" placeholder="Chọn Role" :options="ROLE_OPTIONS" required
+                :status="formState.roleName?.status" :message="(formState.roleName?.message || '')">
                 Vai trò
               </BaseDropBox>
 
@@ -217,6 +263,7 @@ watch(
                 placeholder="Chọn ngày vào làm"
                 required
                 label="Ngày vào làm"
+                :status="formState.hireDate?.status" :message="(formState.hireDate?.message || '')"
               />
 
               <BaseDropBox
@@ -225,6 +272,7 @@ watch(
                 placeholder="Chọn trạng thái"
                 :options="STATUS_EMPLOYEE_OPTIONS"
                 required
+                :status="formState.status?.status" :message="(formState.status?.message || '')"
               >
                 Trạng thái
               </BaseDropBox>
@@ -234,6 +282,7 @@ watch(
                 v-model="formData.resignDate"
                 placeholder="Chọn ngày nghỉ việc"
                 label="Ngày nghỉ việc"
+                :status="formState.resignDate?.status" :message="(formState.resignDate?.message || []).join(', ')"
               />
             </div>
           </section>

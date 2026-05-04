@@ -4,7 +4,10 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseDatePicker from '@/components/base/BaseDatePicker.vue'
 import BaseDropBox from '@/components/base/BaseDropBox.vue'
 import { LEAVE_TYPE_OPTIONS } from '../../constants/option'
+import { STATUS_NOTIFY } from '../../constants/enum'
 import { computed, reactive, watch } from 'vue'
+import { useFormState } from '@/composables/useFormStatus'
+import { isEmptyValue } from '@/utils/validation'
 import dayjs from 'dayjs'
 
 const props = defineProps({
@@ -34,6 +37,53 @@ const getDefaultFormData = () => ({
 })
 
 const formData = reactive(getDefaultFormData())
+const { formState, setFieldState, clearAllStates } = useFormState()
+
+/**
+ * Validate form fields including required checks, date comparisons, and time comparisons
+ * @returns {boolean} true when valid, false otherwise
+ */
+const validateForm = () => {
+  clearAllStates()
+
+  const errors = []
+
+  // Check required fields
+  const requiredFields = ['leaveType', 'startDate', 'endDate']
+  if (!formData.isFullDay) {
+    requiredFields.push('startTime', 'endTime')
+  }
+
+  requiredFields.forEach((field) => {
+    const value = formData[field]
+    if (isEmptyValue(value)) {
+      setFieldState(field, STATUS_NOTIFY.ERROR, 'Trường này là bắt buộc')
+      errors.push(field)
+    } else {
+      setFieldState(field, STATUS_NOTIFY.SUCCESS, '')
+    }
+  })
+
+  // Check date comparison: endDate must be >= startDate
+  if (formData.startDate && formData.endDate) {
+    if (dayjs(formData.endDate).isBefore(dayjs(formData.startDate))) {
+      setFieldState('endDate', STATUS_NOTIFY.ERROR, 'Ngày kết thúc phải >= ngày bắt đầu')
+      errors.push('endDate')
+    }
+  }
+
+  // Check time comparison: endTime must be > startTime (if not full day)
+  if (!formData.isFullDay && formData.startTime && formData.endTime) {
+    const startTimeObj = dayjs(`2000-01-01 ${formData.startTime}`)
+    const endTimeObj = dayjs(`2000-01-01 ${formData.endTime}`)
+    if (endTimeObj.isBefore(startTimeObj) || endTimeObj.isSame(startTimeObj)) {
+      setFieldState('endTime', STATUS_NOTIFY.ERROR, 'Giờ kết thúc phải > giờ bắt đầu')
+      errors.push('endTime')
+    }
+  }
+
+  return errors.length === 0
+}
 
 /**
  * Calculate total days between start and end date, excluding weekends
@@ -93,34 +143,7 @@ const handleClose = () => {
  * Submit form with validation and emit data to parent
  */
 const handleSubmit = () => {
-  // Validation
-  if (!formData.leaveType) {
-    alert('Vui lòng chọn loại nghỉ phép')
-    return
-  }
-
-  if (!formData.startDate) {
-    alert('Vui lòng chọn ngày bắt đầu')
-    return
-  }
-
-  if (!formData.endDate) {
-    alert('Vui lòng chọn ngày kết thúc')
-    return
-  }
-
-  if (dayjs(formData.startDate).isAfter(dayjs(formData.endDate))) {
-    alert('Ngày bắt đầu phải trước ngày kết thúc')
-    return
-  }
-
-  if (!formData.isFullDay && (!formData.startTime || !formData.endTime)) {
-    alert('Vui lòng nhập giờ bắt đầu và kết thúc cho nghỉ phép nửa ngày')
-    return
-  }
-
-  if (totalDays.value === 0 && formData.isFullDay) {
-    alert('Ngày bắt đầu và kết thúc không hợp lệ (không có ngày làm việc)')
+  if (!validateForm()) {
     return
   }
 
@@ -184,6 +207,8 @@ watch(
                   placeholder="Chọn loại nghỉ phép"
                   :options="LEAVE_TYPE_OPTIONS"
                   required
+                  :status="formState.leaveType?.status"
+                  :message="formState.leaveType?.message || ''"
                 >
                   Loại nghỉ phép
                 </BaseDropBox>
@@ -204,6 +229,8 @@ watch(
                   placeholder="Chọn ngày bắt đầu"
                   label="Ngày bắt đầu"
                   required
+                  :status="formState.startDate?.status"
+                  :message="formState.startDate?.message || ''"
                 />
 
                 <BaseDatePicker
@@ -211,6 +238,8 @@ watch(
                   placeholder="Chọn ngày kết thúc"
                   label="Ngày kết thúc"
                   required
+                  :status="formState.endDate?.status"
+                  :message="formState.endDate?.message || ''"
                 />
 
                 <BaseInput
@@ -219,6 +248,8 @@ watch(
                   type="time"
                   :disabled="formData.isFullDay"
                   required
+                  :status="formState.startTime?.status"
+                  :message="formState.startTime?.message || ''"
                 >
                   Giờ bắt đầu
                 </BaseInput>
@@ -229,6 +260,8 @@ watch(
                   type="time"
                   :disabled="formData.isFullDay"
                   required
+                  :status="formState.endTime?.status"
+                  :message="formState.endTime?.message || ''"
                 >
                   Giờ kết thúc
                 </BaseInput>

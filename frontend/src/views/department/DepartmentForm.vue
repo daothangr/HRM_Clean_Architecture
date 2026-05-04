@@ -2,7 +2,10 @@
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseDropBox from '@/components/base/BaseDropBox.vue'
+import { STATUS_NOTIFY } from '../../constants/enum'
 import { computed, reactive, watch } from 'vue'
+import { useFormState } from '@/composables/useFormStatus'
+import { isEmptyValue } from '@/utils/validation'
 
 
 const props = defineProps({
@@ -30,6 +33,7 @@ const getDefaultFormData = () => ({
 })
 
 const formData = reactive(getDefaultFormData())
+const { formState, setFieldState, clearAllStates } = useFormState()
 
 
 /**
@@ -41,10 +45,38 @@ const handleClose = () => {
 }
 
 /**
+ * Hàm validate form trước khi submit. Kiểm tra các trường bắt buộc và cập nhật trạng thái của từng trường.
+ * @returns {boolean} true when valid, false otherwise
+ */
+const validateForm = () => {
+	clearAllStates()
+
+	const requiredFields = ['code', 'name']
+	const errors = []
+
+	requiredFields.forEach((field) => {
+		const value = formData[field]
+
+		if (isEmptyValue(value)) {
+			setFieldState(field, STATUS_NOTIFY.ERROR, 'Trường này là bắt buộc')
+			errors.push(field)
+		} else {
+			setFieldState(field, STATUS_NOTIFY.SUCCESS, '')
+		}
+	})
+
+	return errors.length === 0
+}
+
+/**
  * Xử lý submit form và phát sự kiện submit tới parent component cùng dữ liệu form.
  * @returns {void}
  */
 const handleSubmit = () => {
+	if (!validateForm()) {
+		return
+	}
+
 	const payload = {
 		...formData,
 		code: String(formData.code ?? '').trim(),
@@ -102,11 +134,23 @@ watch(
 						<section class="form-section">
 							<h3 class="form-section-title">Thông tin phòng ban</h3>
 							<div class="form-grid form-grid--two-columns">
-								<BaseInput v-model="formData.code" placeholder="Nhập mã phòng ban" required>
+								<BaseInput
+									v-model="formData.code"
+									placeholder="Nhập mã phòng ban"
+									required
+									:status="formState.code?.status"
+									:message="formState.code?.message || ''"
+								>
 									Mã phòng ban
 								</BaseInput>
 
-								<BaseInput v-model="formData.name" placeholder="Nhập tên phòng ban" required>
+								<BaseInput
+									v-model="formData.name"
+									placeholder="Nhập tên phòng ban"
+									required
+									:status="formState.name?.status"
+									:message="formState.name?.message || ''"
+								>
 									Tên phòng ban
 								</BaseInput>
 
